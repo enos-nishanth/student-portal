@@ -1,59 +1,102 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Student Portal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based Student Portal and E-commerce application designed to provide separate experiences for students and administrators.
 
-## About Laravel
+The platform allows students to manage their profiles, browse products, add products to a cart, manage delivery addresses, and eventually complete purchases through an online payment system. Administrators can manage students and products through a dedicated admin interface.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Project Overview
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The Student Portal is being developed using Laravel and Blade with a focus on clean architecture, role-based access, and a simple user experience.
 
-## Learning Laravel
+The application currently includes:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- Student authentication and registration
+- Admin authentication
+- Student profile management
+- Admin dashboard
+- Student management
+- Product management
+- Product browsing
+- Product details
+- Shopping cart
+- Add to Cart and Buy Now flows
+- Delivery address management
+- Google Maps integration planning
+- REST APIs using Laravel Sanctum
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Future versions will include checkout, order management, and Razorpay payment integration.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠️ Tech Stack
 
-### Premium Partners
+| Technology | Version / Usage |
+|------------|-----------------|
+| Laravel | 12.69.2 |
+| PHP | 8.2.12 |
+| Database | MySQL |
+| Frontend | Blade |
+| UI Framework | Bootstrap 5 |
+| Authentication | Laravel Sanctum |
+| Build Tool | Vite |
+| Payment Gateway | Razorpay (Planned) |
+| Maps | Google Maps (Planned) |
+| Version Control | Git & GitHub |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## ✨ Features
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 👨‍🎓 Student Features
 
-## Code of Conduct
+- Student registration
+- Student login
+- Profile management
+- Browse available products
+- View product details
+- Add products to cart
+- Update cart quantity
+- Remove products from cart
+- Buy Now functionality
+- Manage delivery addresses
+- Select delivery location using map coordinates
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 👨‍💼 Admin Features
 
-## Security Vulnerabilities
+- Admin authentication
+- Admin dashboard
+- View students
+- View student details
+- Edit student information
+- Product management
+- Create products
+- Edit products
+- View products
+- Manage product status
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 🛒 Shopping Cart
 
-## License
+The cart system supports:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Adding products to cart
+- Increasing/decreasing quantity
+- Removing products
+- Calculating item totals
+- Calculating cart total
+
+Product prices are retrieved from the `products` table rather than being duplicated inside `cart_items`.
+
+### ⚡ Add to Cart vs Buy Now
+
+The application provides two separate purchasing flows.
+
+**Add to Cart**
+
+```text
+Product
+   ↓
+Cart
+   ↓
+Checkout
