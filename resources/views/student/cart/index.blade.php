@@ -367,7 +367,14 @@
                             Continue Shopping
                         </a>
 
-                        {{-- Checkout will be added later --}}
+                        {{-- Checkout --}}
+                        <a
+                            href="{{ route('student.checkout') }}"
+                            class="btn btn-primary"
+                        >
+                            <i class="bi bi-credit-card me-1"></i>
+                            Proceed to Checkout
+                        </a>
 
                     </div>
 

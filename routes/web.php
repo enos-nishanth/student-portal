@@ -61,9 +61,16 @@ Route::prefix('student')
         Route::delete('/cart/{cartItem}', [CartController::class, 'remove'])
             ->name('cart.remove');
 
+        //checkout
+        Route::get('/checkout', [CartController::class, 'checkout'])
+            ->name('checkout');
+        Route::post('/checkout', [CartController::class, 'placeOrder'])
+            ->name('checkout.place');
+
         Route::post('/buy-now/{product}', [CartController::class, 'buyNow'])
             ->name('buy-now');
 
+        //address
         Route::get('/addresses', [DeliveryAddressController::class, 'index'])
             ->name('addresses.index');
 
