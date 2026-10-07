@@ -213,6 +213,137 @@
 
                 @endforeach
 
+                {{-- Delivery Address --}}
+                <div class="border-top pt-4 mt-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                Delivery Address
+                            </h5>
+
+                            <p class="text-muted mb-0">
+                                Where should we deliver your order?
+                            </p>
+                        </div>
+
+                        @if ($addresses->count())
+
+                            <a
+                                href="{{ route('student.addresses.index') }}"
+                                class="btn btn-outline-primary btn-sm"
+                            >
+                                    <i class="bi bi-pencil me-1"></i>
+                                    Change Address
+                            </a>
+
+                        @endif
+
+                    </div>
+
+
+                    @if ($addresses->count())
+
+                        @php
+                            $defaultAddress = $addresses->firstWhere('is_default', true);
+
+                            // If no default address exists, use the first saved address
+                            $deliveryAddress = $defaultAddress ?? $addresses->first();
+                        @endphp
+
+
+                        <div class="card border">
+
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <div>
+
+                                        <h6 class="mb-2">
+
+                                            @if ($deliveryAddress->type === 'home')
+
+                                                <i class="bi bi-house-door me-1"></i>
+                                                Home
+
+                                            @elseif ($deliveryAddress->type === 'office')
+
+                                                <i class="bi bi-building me-1"></i>
+                                                Office
+
+                                            @else
+
+                                                <i class="bi bi-geo-alt me-1"></i>
+                                                Other
+
+                                            @endif
+
+                                            @if ($deliveryAddress->is_default)
+
+                                                <span class="badge bg-success ms-2">
+                                                    Default
+                                                </span>
+
+                                            @endif
+
+                                        </h6>
+
+
+                                        <p class="mb-1">
+                                            {{ $deliveryAddress->address }}
+                                        </p>
+
+                                        <p class="text-muted mb-0">
+                                            {{ $deliveryAddress->city }}
+                                                -
+                                            {{ $deliveryAddress->pincode }}
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    @else
+
+                        {{-- No Address --}}
+                        <div class="card border">
+
+                            <div class="card-body text-center py-4">
+
+                                <i class="bi bi-geo-alt fs-2 text-muted"></i>
+
+                                <h6 class="mt-2">
+                                    No Delivery Address
+                                </h6>
+
+                                    <p class="text-muted mb-3">
+                                        Please add a delivery address before checkout.
+                                    </p>
+
+                                <a
+                                    href="{{ route('student.addresses.create') }}"
+                                    class="btn btn-primary"
+                                >
+                                    <i class="bi bi-plus-lg me-1"></i>
+                                    Add Delivery Address
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    @endif
+
+                </div>
+
 
                 {{-- Cart Total --}}
                 <div class="d-flex justify-content-end mt-4">

@@ -65,7 +65,12 @@ class CartController extends Controller
 
         $cart->load('items.product');
 
-        return view('student.cart.index', compact('cart'));
+        $addresses = auth()->user()
+            ->deliveryAddresses()
+            ->latest()
+            ->get();
+
+        return view('student.cart.index', compact('cart', 'addresses'));
     }
 
     public function update(Request $request, CartItem $cartItem)

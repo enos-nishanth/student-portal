@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\ProductController as StudentProductController;
 use App\Http\Controllers\Student\CartController;
+use App\Http\Controllers\Student\DeliveryAddressController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -62,6 +63,24 @@ Route::prefix('student')
 
         Route::post('/buy-now/{product}', [CartController::class, 'buyNow'])
             ->name('buy-now');
+
+        Route::get('/addresses', [DeliveryAddressController::class, 'index'])
+            ->name('addresses.index');
+
+        Route::get('/addresses/create', [DeliveryAddressController::class, 'create'])
+            ->name('addresses.create');
+
+        Route::post('/addresses', [DeliveryAddressController::class, 'store'])
+            ->name('addresses.store');
+
+        Route::get('/addresses/{deliveryAddress}/edit', [DeliveryAddressController::class, 'edit'])
+            ->name('addresses.edit');
+
+        Route::put('/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'update'])
+            ->name('addresses.update');
+
+        Route::delete('/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'destroy'])
+            ->name('addresses.destroy');
 
     });
 
