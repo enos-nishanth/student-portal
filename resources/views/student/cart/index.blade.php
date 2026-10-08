@@ -369,7 +369,7 @@
 
                         {{-- Checkout --}}
                         <a
-                            href="{{ route('student.checkout') }}"
+                            href="{{ route('student.checkout.cart') }}"
                             class="btn btn-primary"
                         >
                             <i class="bi bi-credit-card me-1"></i>

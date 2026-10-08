@@ -64,8 +64,12 @@ Route::prefix('student')
         //checkout
         Route::get('/checkout', [CartController::class, 'checkout'])
             ->name('checkout');
+            
         Route::post('/checkout', [CartController::class, 'placeOrder'])
             ->name('checkout.place');
+
+        Route::get('/checkout/cart', [CartController::class, 'cartCheckout'])
+            ->name('checkout.cart');
 
         Route::post('/buy-now/{product}', [CartController::class, 'buyNow'])
             ->name('buy-now');
