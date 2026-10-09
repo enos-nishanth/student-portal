@@ -11,6 +11,9 @@ use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\ProductController as StudentProductController;
 use App\Http\Controllers\Student\CartController;
 use App\Http\Controllers\Student\DeliveryAddressController;
+use App\Http\Controllers\Student\PaymentController;
+use App\Http\Controllers\Student\OrderController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -64,7 +67,7 @@ Route::prefix('student')
         //checkout
         Route::get('/checkout', [CartController::class, 'checkout'])
             ->name('checkout');
-            
+
         Route::post('/checkout', [CartController::class, 'placeOrder'])
             ->name('checkout.place');
 
@@ -92,6 +95,27 @@ Route::prefix('student')
 
         Route::delete('/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'destroy'])
             ->name('addresses.destroy');
+
+        //payment
+        Route::post('/payment/create-order', [PaymentController::class, 'createOrder'])
+            ->name('payment.create-order');
+
+        Route::get('/payment/{order}', [PaymentController::class, 'show'])
+            ->name('payment.show');
+
+        Route::post('/payment/verify', [PaymentController::class, 'verify'])
+            ->name('payment.verify');
+
+        Route::get('/payment/{order}', [PaymentController::class, 'show'])
+            ->name('payment.show');
+    
+        // order
+
+        Route::get('/orders', [OrderController::class, 'index'])
+            ->name('orders.index');
+
+        Route::get('/orders/{order}', [OrderController::class, 'show'])
+            ->name('orders.show');
 
     });
 

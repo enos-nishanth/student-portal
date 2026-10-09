@@ -480,11 +480,8 @@
                             class="btn btn-primary w-100"
                             {{ $addresses->isEmpty() ? 'disabled' : '' }}
                         >
-
                             <i class="bi bi-credit-card me-1"></i>
-
                             Proceed to Payment
-
                         </button>
 
 

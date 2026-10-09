@@ -146,203 +146,180 @@ class CartController extends Controller
     }
 
     public function placeOrder(Request $request)
-{
-    $request->validate([
-        'delivery_address_id' => 'required|exists:delivery_addresses,id',
-        'payment_method' => 'required|in:upi,card,cod',
-    ]);
+    {
+        $request->validate([
+            'delivery_address_id' => 'required|exists:delivery_addresses,id',
+            'payment_method' => 'required|in:upi,card,cod',
+        ]);
 
-    // Make sure the address belongs to the logged-in user
+        // Make sure the address belongs to the logged-in user
 
-    $address = auth()->user()
-        ->deliveryAddresses()
-        ->where('id', $request->delivery_address_id)
-        ->first();
+        $address = auth()->user()
+            ->deliveryAddresses()
+            ->where('id', $request->delivery_address_id)
+            ->first();
 
-    if (!$address) {
-        abort(403);
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Determine Checkout Source
-    |--------------------------------------------------------------------------
-    */
-
-    $checkoutSource = session('checkout_source', 'cart');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Buy Now Checkout
-    |--------------------------------------------------------------------------
-    */
-
-    if ($checkoutSource === 'buy_now') {
-
-        $buyNow = session('buy_now');
-
-        if (!$buyNow) {
-
-            session()->forget('checkout_source');
-
-            return redirect()
-                ->route('student.products.index')
-                ->with('error', 'Buy Now session expired.');
+        if (!$address) {
+            abort(403);
         }
 
-        $product = Product::find($buyNow['product_id']);
+        // Determine Checkout Source
 
-        if (!$product || !$product->status) {
+        $checkoutSource = session('checkout_source', 'cart');
+
+        // Buy Now Checkout
+
+        if ($checkoutSource === 'buy_now') {
+
+            $buyNow = session('buy_now');
+
+            if (!$buyNow) {
+
+                session()->forget('checkout_source');
+
+                return redirect()
+                    ->route('student.products.index')
+                    ->with('error', 'Buy Now session expired.');
+            }
+
+            $product = Product::find($buyNow['product_id']);
+
+            if (!$product || !$product->status) {
+
+                session()->forget([
+                    'buy_now',
+                    'checkout_source',
+                ]);
+
+                return redirect()
+                    ->route('student.products.index')
+                    ->with('error', 'Product is no longer available.');
+            }
+
+            $items = collect([
+                (object) [
+                    'product' => $product,
+                    'quantity' => $buyNow['quantity'],
+                ]
+            ]);
+        }
+
+        // Cart Checkout
+
+        else {
+
+            $cart = Cart::where('user_id', auth()->id())
+                ->with('items.product')
+                ->first();
+
+            if (!$cart || $cart->items->count() === 0) {
+
+                return redirect()
+                    ->route('student.cart.index')
+                    ->with('error', 'Your cart is empty.');
+            }
+
+            $items = $cart->items;
+        }
+
+        // Calculate Total
+
+        $cartTotal = 0;
+
+        foreach ($items as $item) {
+
+            if (!$item->product->status) {
+
+                return redirect()
+                    ->route('student.cart.index')
+                    ->with(
+                        'error',
+                        "{$item->product->name} is no longer available."
+                    );
+            }
+
+            $cartTotal += $item->product->price * $item->quantity;
+        }
+
+        // Create Order
+
+        $order = \App\Models\Order::create([
+
+            'user_id' => auth()->id(),
+
+            'delivery_address_id' => $address->id,
+
+            'order_number' =>
+                'ORD-' .
+                now()->format('YmdHis') .
+                '-' .
+                auth()->id(),
+
+            'payment_method' => $request->payment_method,
+
+            'total_amount' => $cartTotal,
+
+            'order_status' => $request->payment_method === 'cod' ? 'confirmed' : 'pending',
+
+            'payment_status' => 'pending',
+        ]);
+
+        // Create Order Items
+
+        foreach ($items as $item) {
+
+            $price = $item->product->price;
+
+            $order->items()->create([
+
+                'product_id' => $item->product->id,
+
+                'product_name' => $item->product->name,
+
+                'price' => $price,
+
+                'quantity' => $item->quantity,
+
+                'total' => $price * $item->quantity,
+
+            ]);
+        }
+
+        // Clear Checkout Session
+        if ($order->payment_method === 'cod') {
 
             session()->forget([
                 'buy_now',
                 'checkout_source',
             ]);
-
-            return redirect()
-                ->route('student.products.index')
-                ->with('error', 'Product is no longer available.');
         }
 
-        $items = collect([
-            (object) [
-                'product' => $product,
-                'quantity' => $buyNow['quantity'],
-            ]
+        if (in_array($order->payment_method, ['upi', 'card'])) {
+
+            return redirect()
+                ->route('student.payment.show', $order);
+        }
+
+        // COD
+
+        if ($checkoutSource === 'cart') {
+
+            $cart->items()->delete();
+        }
+
+        session()->forget([
+            'buy_now',
+            'checkout_source',
         ]);
 
+        return redirect()
+            ->route('student.orders.show', $order)
+            ->with(
+                'success',
+                "Order {$order->order_number} placed successfully."
+            );
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cart Checkout
-    |--------------------------------------------------------------------------
-    */
-
-    else {
-
-        $cart = Cart::where('user_id', auth()->id())
-            ->with('items.product')
-            ->first();
-
-        if (!$cart || $cart->items->count() === 0) {
-
-            return redirect()
-                ->route('student.cart.index')
-                ->with('error', 'Your cart is empty.');
-        }
-
-        $items = $cart->items;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Calculate Total
-    |--------------------------------------------------------------------------
-    */
-
-    $cartTotal = 0;
-
-    foreach ($items as $item) {
-
-        if (!$item->product->status) {
-
-            return redirect()
-                ->route('student.cart.index')
-                ->with(
-                    'error',
-                    "{$item->product->name} is no longer available."
-                );
-        }
-
-        $cartTotal +=
-            $item->product->price * $item->quantity;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Create Order
-    |--------------------------------------------------------------------------
-    */
-
-    $order = \App\Models\Order::create([
-
-        'user_id' => auth()->id(),
-
-        'delivery_address_id' => $address->id,
-
-        'order_number' =>
-            'ORD-' .
-            now()->format('YmdHis') .
-            '-' .
-            auth()->id(),
-
-        'payment_method' => $request->payment_method,
-
-        'total_amount' => $cartTotal,
-
-        'order_status' => 'pending',
-
-        'payment_status' => 'pending',
-    ]);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Create Order Items
-    |--------------------------------------------------------------------------
-    */
-
-    foreach ($items as $item) {
-
-        $price = $item->product->price;
-
-        $order->items()->create([
-
-            'product_id' => $item->product->id,
-
-            'product_name' => $item->product->name,
-
-            'price' => $price,
-
-            'quantity' => $item->quantity,
-
-            'total' => $price * $item->quantity,
-
-        ]);
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Clear Checkout Session
-    |--------------------------------------------------------------------------
-    */
-
-    session()->forget([
-        'buy_now',
-        'checkout_source',
-    ]);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Temporary Response
-    |--------------------------------------------------------------------------
-    */
-
-    return redirect()
-        ->route('student.checkout')
-        ->with(
-            'success',
-            "Order {$order->order_number} created successfully."
-        );
-}
     public function cartCheckout()
     {
         // Explicitly set checkout source to cart

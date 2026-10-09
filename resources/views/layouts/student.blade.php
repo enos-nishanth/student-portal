@@ -89,13 +89,13 @@
 
 
             {{-- My Purchases --}}
-            <li>
+            <li class="nav-item">
 
-                <a
-                    href="#"
-                    class="nav-link text-white"
+                <a 
+                    href="{{ route('student.orders.index') }}"
+                    class="nav-link  text-white"
                 >
-                    My Purchases
+                    <span>My Purchases</span>
                 </a>
 
             </li>
