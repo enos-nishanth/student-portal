@@ -69,7 +69,16 @@
                         class="nav-link"
                     >
                         Products
-                    </a>                 
+                    </a>
+                    
+                    
+                    <a
+                        href="{{ route('admin.orders.index') }}"
+                        class="nav-link"
+                    >
+    Orders
+</a>
+
 
                 </div>
 

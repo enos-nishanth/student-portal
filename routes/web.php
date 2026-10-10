@@ -13,6 +13,7 @@ use App\Http\Controllers\Student\CartController;
 use App\Http\Controllers\Student\DeliveryAddressController;
 use App\Http\Controllers\Student\PaymentController;
 use App\Http\Controllers\Student\OrderController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 
 Route::get('/', function () {
@@ -171,6 +172,19 @@ Route::middleware(['auth','admin'])->group(function () {
 
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])
             ->name('products.destroy');
+
+        //order
+        Route::get('/orders', [AdminOrderController::class, 'index'])
+            ->name('orders.index');
+
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])
+            ->name('orders.show');
+
+        Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
+            ->name('orders.updateStatus');
+
+        Route::patch('/orders/{order}/payment', [AdminOrderController::class, 'markAsPaid'])
+            ->name('orders.markAsPaid');
 
     });
 });
