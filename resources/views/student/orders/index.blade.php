@@ -260,6 +260,14 @@
 
                                         </a>
 
+                                        <a
+                                            href="{{ route('student.orders.track', $order) }}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+                                            <i class="bi bi-truck me-1"></i>
+                                            Track Order
+                                        </a>
+
                                     </td>
 
                                 </tr>

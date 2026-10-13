@@ -31,4 +31,22 @@ class OrderController extends Controller
 
         return view('student.orders.show', compact('order'));
     }
+
+    
+    public function track(\App\Models\Order $order)
+    {
+    
+        abort_unless($order->user_id === auth()->id(), 404);
+
+        // Match the orders visible in My Purchases.
+        if (
+            $order->payment_method !== 'cod' &&
+            $order->payment_status !== 'paid'
+        ) {
+            abort(404);
+        }
+
+        return view('student.orders.track', compact('order'));
+    }
+
 }

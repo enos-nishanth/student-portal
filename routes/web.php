@@ -118,6 +118,9 @@ Route::prefix('student')
         Route::get('/orders/{order}', [OrderController::class, 'show'])
             ->name('orders.show');
 
+        Route::get('/orders/{order}/track', [OrderController::class, 'track'])
+            ->name('orders.track');
+
     });
 
 //admin
