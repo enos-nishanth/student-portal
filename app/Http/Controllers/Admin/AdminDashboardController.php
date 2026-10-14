@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Student;
+use App\Models\Product;
+use App\Models\Order;
 
 class AdminDashboardController extends Controller
 {
@@ -12,7 +13,14 @@ class AdminDashboardController extends Controller
     {
         $studentCount = Student::count();
 
-        return view('admin.dashboard', compact('studentCount'));
+        $productCount = Product::count();
+
+        $orderCount = Order::count();
+
+        return view('admin.dashboard', compact(
+            'studentCount',
+            'productCount',
+            'orderCount'
+        ));
     }
 }
- 

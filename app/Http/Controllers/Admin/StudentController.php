@@ -10,12 +10,35 @@ use App\Http\Requests\UpdateStudentRequest;
 
 class StudentController extends Controller
 {
-    public function index()
-    {
-        $students = Student::with('user')->get();
 
-        return view('admin.students.index', compact('students'));
+    public function index(Request $request)
+    {
+        $search = trim($request->input('search', ''));
+
+        $students = Student::with('user')
+            ->when($search !== '', function ($query) use ($search) {
+
+                $query->where(function ($query) use ($search) {
+
+                    // Search student name, email, and phone
+                    $query->whereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    })
+
+                    // Search academic details
+                    ->orWhere('college', 'like', "%{$search}%")
+                    ->orWhere('qualification', 'like', "%{$search}%");
+
+                });
+
+            })
+            ->get();
+
+        return view('admin.students.index', compact('students', 'search'));
     }
+
 
     public function show(Student $student)
     {
