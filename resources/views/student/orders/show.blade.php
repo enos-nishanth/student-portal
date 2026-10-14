@@ -4,6 +4,30 @@
 
 @section('content')
 
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show">
+        {{ session('success') }}
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+        ></button>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show">
+        {{ session('error') }}
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+        ></button>
+    </div>
+@endif
+
 <div class="container-fluid py-4">
 
     {{-- Success Message --}}
@@ -242,15 +266,37 @@
                     <div>
                         {{ $order->deliveryAddress->pincode }}
                     </div>
-
+                    
                 </div>
-
+                
             </div>
 
         </div>
 
     </div>
+    @if (
+                        $order->order_status !== 'cancelled' &&
+                        !in_array($order->order_status, [
+                            'shipped',
+                            'out_for_delivery',
+                            'delivered',
+                        ]) &&
+                        $order->created_at->addHours(24)->isFuture()
+                    )
+                        <form
+                            action="{{ route('student.orders.cancel', $order) }}"
+                            method="POST"
+                            onsubmit="return confirm('Are you sure you want to cancel this order?')"
+                        >
+                        @csrf
+                        @method('PATCH')
 
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Cancel Order
+                            </button>
+                        </form>
+                    @endif
 
     {{-- Actions --}}
     <div class="mt-4">

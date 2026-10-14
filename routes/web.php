@@ -121,6 +121,9 @@ Route::prefix('student')
         Route::get('/orders/{order}/track', [OrderController::class, 'track'])
             ->name('orders.track');
 
+        Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])
+            ->name('orders.cancel');
+
     });
 
 //admin
