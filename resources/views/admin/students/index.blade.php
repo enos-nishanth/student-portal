@@ -178,26 +178,29 @@
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
 
-                                    {{-- Delete --}}
+                                    {{-- Delete --}}   
                                     <form
                                         action="{{ route('admin.students.destroy', $student) }}"
                                         method="POST"
                                         class="d-inline"
-                                        onsubmit="return confirm('Are you sure you want to delete this student?')"
+                                        id="deleteStudentForm-{{ $student->id }}"
                                     >
                                         @csrf
                                         @method('DELETE')
 
                                         <button
-                                            type="submit"
+                                            type="button"
                                             class="btn btn-sm btn-outline-danger"
                                             title="Delete Student"
                                             aria-label="Delete Student"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteStudentModal"
+                                            data-student-id="{{ $student->id }}"
+                                            data-student-name="{{ $student->user->name }}"
                                         >
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
-
                                 </div>
                             </td>
                         </tr>
@@ -236,4 +239,109 @@
 
 </div>
 
+<div class="modal fade" id="deleteStudentModal" tabindex="-1"
+     aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="deleteStudentModalLabel">
+                    <i class="bi bi-person-x text-danger me-2"></i>
+                    Delete Student?
+                </h5>
+
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <p class="text-muted">
+                    Are you sure you want to delete this student?
+                </p>
+
+                <div class="bg-light rounded-3 p-3">
+                    <small class="text-muted">Student name</small>
+                    <div class="fw-semibold" id="deleteStudentName">
+                        {{ $student->user->name }}
+                    </div>
+                </div>
+
+                <div class="alert alert-danger mt-3 mb-0">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    This action may affect the student's associated records.
+                    Please verify before continuing.
+                </div>
+            </div>
+
+            <div class="modal-footer border-0">
+                <button type="button"
+                        class="btn btn-light border"
+                        data-bs-dismiss="modal">
+                    Keep Student
+                </button>
+
+                <button type="button"
+                        class="btn btn-danger"
+                        id="confirmDeleteStudentBtn">
+                    <i class="bi bi-trash me-1"></i>
+                    Delete Student
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('deleteStudentModal');
+            const confirmButton = document.getElementById('confirmDeleteStudentBtn');
+            const studentNameElement = document.getElementById('deleteStudentName');
+
+            let selectedForm = null;
+
+            if (!modal || !confirmButton || !studentNameElement) {
+                return;
+            }
+
+            modal.addEventListener('show.bs.modal', function (event) {
+                const triggerButton = event.relatedTarget;
+
+                if (!triggerButton) {
+                    selectedForm = null;
+                    return;
+                }
+
+                const studentId = triggerButton.getAttribute('data-student-id');
+                const studentName = triggerButton.getAttribute('data-student-name');
+
+                selectedForm = document.getElementById(
+                    'deleteStudentForm-' + studentId
+                );
+
+                studentNameElement.textContent =
+                    studentName || 'Selected student';
+
+                confirmButton.disabled = false;
+                confirmButton.innerHTML =
+                    '<i class="bi bi-trash me-1"></i> Delete Student';
+            });
+
+            confirmButton.addEventListener('click', function () {
+                if (!selectedForm) {
+                    return;
+                }
+
+                confirmButton.disabled = true;
+                confirmButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-1"></span> Deleting...';
+
+                selectedForm.submit();
+            });
+        });
+    </script>
+@endpush
