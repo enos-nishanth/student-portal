@@ -20,11 +20,20 @@ class Order extends Model
         'razorpay_payment_id',
         'razorpay_signature',
         'paid_at',
+        'refund_status',
+        'razorpay_refund_id',
+        'refund_amount',
+        'refund_requested_at',
+        'refunded_at',
+        'refund_reason',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
         'paid_at' => 'datetime',
+        'refund_amount' => 'decimal:2',
+        'refund_requested_at' => 'datetime',
+        'refunded_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

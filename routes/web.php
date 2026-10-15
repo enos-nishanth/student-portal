@@ -124,6 +124,9 @@ Route::prefix('student')
         Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])
             ->name('orders.cancel');
 
+        Route::post('/orders/{order}/refund', [OrderController::class, 'requestRefund'])
+            ->name('orders.refund');
+
     });
 
 //admin
