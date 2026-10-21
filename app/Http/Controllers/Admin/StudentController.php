@@ -34,7 +34,9 @@ class StudentController extends Controller
                 });
 
             })
-            ->get();
+            ->latest('students.id')
+            ->paginate(10)
+            ->withQueryString();
 
         return view('admin.students.index', compact('students', 'search'));
     }

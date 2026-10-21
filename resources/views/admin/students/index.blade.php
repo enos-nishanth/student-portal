@@ -15,7 +15,7 @@
 
     <span class="badge text-bg-primary fs-6 px-3 py-2">
         <i class="bi bi-people me-2"></i>
-        {{ $students->count() }} student(s)
+        {{ $students->total() }} student(s)
     </span>
 </div>
 
@@ -104,7 +104,7 @@
                         <tr>
                             {{-- Serial Number --}}
                             <td class="px-3">
-                                {{ $loop->iteration }}
+                                {{ $students->firstItem() + $loop->index }}
                             </td>
 
                             {{-- Student Name --}}
@@ -233,9 +233,25 @@
 
     </div>
 
-    <div class="card-footer bg-white border-0 text-muted small p-3">
-        Showing {{ $students->count() }} student(s)
+    
+    <div class="card-footer bg-white border-0 p-3">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+            <small class="text-muted">
+                Showing {{ $students->firstItem() ?? 0 }}
+                to {{ $students->lastItem() ?? 0 }}
+                of {{ $students->total() }} student(s)
+            </small>
+
+            @if($students->hasPages())
+                {{ $students->links('pagination::bootstrap-5') }}
+            @endif
+
+        </div>
+
     </div>
+
 
 </div>
 
