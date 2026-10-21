@@ -43,4 +43,9 @@ return [
         'key' => env('RAZORPAY_KEY_ID'),
         'secret' => env('RAZORPAY_KEY_SECRET'),
     ],
+
+    'twofactor' => [
+        'api_key' => env('TWOFACTOR_API_KEY'),
+        'otp_template' => env('TWOFACTOR_OTP_TEMPLATE', 'OTP1'),
+    ],
 ];

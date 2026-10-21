@@ -14,6 +14,7 @@ use App\Http\Controllers\Student\DeliveryAddressController;
 use App\Http\Controllers\Student\PaymentController;
 use App\Http\Controllers\Student\OrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Auth\OtpVerificationController;
 
 
 Route::get('/', function () {
@@ -32,6 +33,13 @@ Route::get('/login', [LoginController::class, 'create'])
 
 Route::post('/login', [LoginController::class, 'store'])
     ->name('login.store');
+
+// SMS OTP verification
+Route::get('/login/otp', [OtpVerificationController::class, 'create',])
+    ->name('login.otp');
+
+Route::post('/login/otp', [OtpVerificationController::class, 'store',])
+    ->name('login.otp.verify');
 
 Route::post('/logout', [LoginController::class, 'destroy'])
     ->name('logout');
