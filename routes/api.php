@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\Admin\StudentController;
 use App\Http\Controllers\Api\Student\StudentDashboardController;
+use App\Http\Controllers\Api\Admin\ProductController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -19,6 +20,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum', 'student'])->group(function () {
 
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index']);
+
 
 });
 
@@ -34,4 +36,18 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::put('/admin/students/{id}', [StudentController::class, 'update']);// update
 
     Route::delete('/admin/students/{id}', [StudentController::class, 'destroy']);//delete
-});
+
+    // Product APIs
+    Route::get('/admin/products', [ProductController::class, 'index']);
+
+    Route::post('/admin/products', [ProductController::class, 'store']);
+
+    Route::get('/admin/products/{product}', [ProductController::class, 'show']);
+
+    Route::put('/admin/products/{product}', [ProductController::class, 'update']);
+
+    Route::patch('/admin/products/{product}', [ProductController::class, 'update']);
+
+    Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
+
+});   
