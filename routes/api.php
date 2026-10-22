@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Admin\StudentController;
 use App\Http\Controllers\Api\Student\StudentDashboardController;
 use App\Http\Controllers\Api\Admin\ProductController;
 use App\Http\Controllers\Api\Admin\OrderController;
+use App\Http\Controllers\Api\Student\ProductController as StudentProductController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -21,7 +22,7 @@ Route::middleware(['auth:sanctum', 'student'])->group(function () {
 
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index']);
 
-
+    
 });
 
 
@@ -44,10 +45,15 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
 
     // Order APIs
-    
-
-});   
-Route::get('/admin/orders', [OrderController::class, 'index']);
+    Route::get('/admin/orders', [OrderController::class, 'index']);
     Route::get('/admin/orders/{order}', [OrderController::class, 'show']);
     Route::patch('/admin/orders/{order}/status',[OrderController::class, 'updateStatus']);
     Route::patch('/admin/orders/{order}/mark-paid',[OrderController::class, 'markAsPaid']);
+
+});   
+
+
+//under testing
+// Student Product APIs
+    Route::get('/student/products', [StudentProductController::class,'index']);
+    Route::get('/student/products/{product}', [StudentProductController::class,'show']);
