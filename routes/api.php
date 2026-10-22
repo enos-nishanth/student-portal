@@ -7,13 +7,13 @@ use App\Http\Controllers\Api\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\Admin\StudentController;
 use App\Http\Controllers\Api\Student\StudentDashboardController;
 use App\Http\Controllers\Api\Admin\ProductController;
+use App\Http\Controllers\Api\Admin\OrderController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
 Route::post('/register', [AuthController::class, 'register']);
-
 Route::post('/login', [AuthController::class, 'login']);
 
 
@@ -29,25 +29,25 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index']);// dashbord (no of students)
 
+    //student APIs
     Route::get('/admin/students', [StudentController::class, 'index']);// list all the student
-
     Route::get('/admin/students/{student}', [StudentController::class, 'show']);// individual student
-
     Route::put('/admin/students/{id}', [StudentController::class, 'update']);// update
-
     Route::delete('/admin/students/{id}', [StudentController::class, 'destroy']);//delete
 
     // Product APIs
     Route::get('/admin/products', [ProductController::class, 'index']);
-
     Route::post('/admin/products', [ProductController::class, 'store']);
-
     Route::get('/admin/products/{product}', [ProductController::class, 'show']);
-
     Route::put('/admin/products/{product}', [ProductController::class, 'update']);
-
     Route::patch('/admin/products/{product}', [ProductController::class, 'update']);
-
     Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
 
+    // Order APIs
+    
+
 });   
+Route::get('/admin/orders', [OrderController::class, 'index']);
+    Route::get('/admin/orders/{order}', [OrderController::class, 'show']);
+    Route::patch('/admin/orders/{order}/status',[OrderController::class, 'updateStatus']);
+    Route::patch('/admin/orders/{order}/mark-paid',[OrderController::class, 'markAsPaid']);
