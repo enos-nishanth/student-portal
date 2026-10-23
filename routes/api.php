@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Admin\ProductController;
 use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Student\ProductController as StudentProductController;
 use App\Http\Controllers\Api\Student\DeliveryAddressController;
+use App\Http\Controllers\Api\Student\CartController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -34,6 +35,15 @@ Route::middleware(['auth:sanctum', 'student'])->group(function () {
     Route::put('/student/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'update']);
     Route::patch('/student/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'update']);
     Route::delete('/student/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'destroy']);
+
+    // Student Cart APIs
+    Route::get('/student/cart', [CartController::class, 'index']);
+    Route::post('/student/cart/items', [CartController::class, 'add']);
+    Route::patch('/student/cart/items/{cartItem}', [CartController::class, 'update']);
+    Route::delete('/student/cart/items/{cartItem}', [CartController::class, 'remove']);
+    Route::post('/student/cart/buy-now/{product}', [CartController::class, 'buyNow']);
+    Route::post('/student/checkout', [CartController::class, 'checkout']);
+    Route::post('/student/orders', [CartController::class, 'placeOrder']);
 });
 
 
