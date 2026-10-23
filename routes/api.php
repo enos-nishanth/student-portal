@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Student\StudentDashboardController;
 use App\Http\Controllers\Api\Admin\ProductController;
 use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Student\ProductController as StudentProductController;
+use App\Http\Controllers\Api\Student\DeliveryAddressController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,7 +23,17 @@ Route::middleware(['auth:sanctum', 'student'])->group(function () {
 
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index']);
 
-    
+    // Student Product APIs
+    Route::get('/student/products', [StudentProductController::class,'index']);
+    Route::get('/student/products/{product}', [StudentProductController::class,'show']);
+
+    // Delivery Address APIs
+    Route::get('/student/addresses', [DeliveryAddressController::class, 'index']);
+    Route::get('/student/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'show']);
+    Route::post('/student/addresses', [DeliveryAddressController::class, 'store']);
+    Route::put('/student/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'update']);
+    Route::patch('/student/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'update']);
+    Route::delete('/student/addresses/{deliveryAddress}', [DeliveryAddressController::class, 'destroy']);
 });
 
 
@@ -54,6 +65,3 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
 
 //under testing
-// Student Product APIs
-    Route::get('/student/products', [StudentProductController::class,'index']);
-    Route::get('/student/products/{product}', [StudentProductController::class,'show']);
