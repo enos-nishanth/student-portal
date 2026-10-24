@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Admin\OrderController;
 use App\Http\Controllers\Api\Student\ProductController as StudentProductController;
 use App\Http\Controllers\Api\Student\DeliveryAddressController;
 use App\Http\Controllers\Api\Student\CartController;
+use App\Http\Controllers\Api\Student\PaymentController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -44,6 +45,11 @@ Route::middleware(['auth:sanctum', 'student'])->group(function () {
     Route::post('/student/cart/buy-now/{product}', [CartController::class, 'buyNow']);
     Route::post('/student/checkout', [CartController::class, 'checkout']);
     Route::post('/student/orders', [CartController::class, 'placeOrder']);
+
+    // Student Payment APIs
+    Route::post('/student/payment/create-order', [PaymentController::class,'createOrder',]);
+    Route::get('/student/payment/{order}', [PaymentController::class,'show',]);
+    Route::post('/student/payment/verify', [PaymentController::class,'verify',]);
 });
 
 

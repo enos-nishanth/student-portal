@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Test Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h2>Student Portal Payment Test</h2>
+    <p>Order ID: 42</p>
+    <p>Amount: ₹500</p>
+
+    <button id="payButton">Pay ₹500</button>
+
+    <script>
+        const options = {
+            key: "rzp_test_TcZRiGnb12r9SH",
+            amount: 50000,
+            currency: "INR",
+            name: "Student Portal",
+            description: "Order ORD-20261024055530-1-9b0b46",
+            order_id: "order_TrdaxDHSOs04m7",
+
+            handler: function (response) {
+                console.log("Razorpay payment response:", response);
+
+                document.body.insertAdjacentHTML(
+                    "beforeend",
+                    "<h3>Checkout completed!</h3>" +
+                    "<p>Payment ID: " + response.razorpay_payment_id + "</p>" +
+                    "<p>Razorpay Order ID: " + response.razorpay_order_id + "</p>" +
+                    "<p>Signature received. Check the browser console for details.</p>"
+                );
+            },
+
+            theme: {
+                color: "#3399cc"
+            }
+        };
+
+        document.getElementById("payButton").addEventListener("click", function () {
+            const checkout = new Razorpay(options);
+
+            checkout.on("payment.failed", function (response) {
+                console.error("Payment failed:", response.error);
+                alert("Payment failed. Check the browser console.");
+            });
+
+            checkout.open();
+        });
+    </script>
+</body>
+</html>
