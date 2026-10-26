@@ -213,15 +213,12 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $image = $product->image;
-
         try {
             DB::transaction(function () use ($product) {
                 $product->delete();
             });
-
         } catch (Throwable $exception) {
-            Log::error('Failed to delete product.', [
+            Log::error('Failed to soft-delete product.', [
                 'product_id' => $product->id,
                 'exception' => $exception,
             ]);
@@ -229,25 +226,6 @@ class ProductController extends Controller
             return $this->serverError(
                 'Unable to delete the product right now.'
             );
-        }
-
-        if ($image) {
-            try {
-                $deleted = Storage::disk('public')->delete($image);
-
-                if (!$deleted) {
-                    Log::warning('Product was deleted, but its image remains.', [
-                        'product_id' => $product->id,
-                        'path' => $image,
-                    ]);
-                }
-            } catch (Throwable $exception) {
-                Log::error('Failed to delete product image.', [
-                    'product_id' => $product->id,
-                    'path' => $image,
-                    'exception' => $exception,
-                ]);
-            }
         }
 
         return response()->json([
