@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Student\ProductController as StudentProductControll
 use App\Http\Controllers\Api\Student\DeliveryAddressController;
 use App\Http\Controllers\Api\Student\CartController;
 use App\Http\Controllers\Api\Student\PaymentController;
+use App\Http\Controllers\Api\Student\OrderController as StudentOrderController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -50,6 +51,13 @@ Route::middleware(['auth:sanctum', 'student'])->group(function () {
     Route::post('/student/payment/create-order', [PaymentController::class,'createOrder',]);
     Route::get('/student/payment/{order}', [PaymentController::class,'show',]);
     Route::post('/student/payment/verify', [PaymentController::class,'verify',]);
+
+    // Student Order APIs
+    Route::get('/student/orders', [StudentOrderController::class,'index',]);
+    Route::get('/student/orders/{order}', [StudentOrderController::class,'show',]);
+    Route::get('/student/orders/{order}/track', [StudentOrderController::class,'track',]);
+    Route::post('/student/orders/{order}/cancel', [StudentOrderController::class,'cancel',]);
+    Route::post('/student/orders/{order}/refund', [StudentOrderController::class,'requestRefund',]);
 });
 
 
@@ -60,7 +68,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     //student APIs
     Route::get('/admin/students', [StudentController::class, 'index']);// list all the student
     Route::get('/admin/students/{student}', [StudentController::class, 'show']);// individual student
-    Route::put('/admin/students/{id}', [StudentController::class, 'update']);// update
+    Route::patch('/admin/students/{id}', [StudentController::class, 'update']);// update
     Route::delete('/admin/students/{id}', [StudentController::class, 'destroy']);//delete
 
     // Product APIs
@@ -68,7 +76,6 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/admin/products', [ProductController::class, 'store']);
     Route::get('/admin/products/{product}', [ProductController::class, 'show']);
     Route::put('/admin/products/{product}', [ProductController::class, 'update']);
-    Route::patch('/admin/products/{product}', [ProductController::class, 'update']);
     Route::delete('/admin/products/{product}', [ProductController::class, 'destroy']);
 
     // Order APIs
@@ -78,6 +85,3 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::patch('/admin/orders/{order}/mark-paid',[OrderController::class, 'markAsPaid']);
 
 });   
-
-
-//under testing
