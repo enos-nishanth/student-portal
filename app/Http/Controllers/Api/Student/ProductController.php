@@ -29,7 +29,7 @@ class ProductController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Products retrieved successfully.',
-                'data' => $products,
+                'data' => $products, // each item now includes image_url
             ], 200);
 
         } catch (Throwable $exception) {
@@ -43,7 +43,6 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
 
     public function show(Product $product)
     {
@@ -69,6 +68,7 @@ class ProductController extends Controller
                     'type',
                     'price',
                     'image',
+                    'image_url', // added
                     'status',
                     'created_at',
                     'updated_at',

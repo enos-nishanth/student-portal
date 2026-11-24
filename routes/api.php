@@ -13,10 +13,17 @@ use App\Http\Controllers\Api\Student\DeliveryAddressController;
 use App\Http\Controllers\Api\Student\CartController;
 use App\Http\Controllers\Api\Student\PaymentController;
 use App\Http\Controllers\Api\Student\OrderController as StudentOrderController;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+//temp
+Route::get('/product-image/{path}', function (string $path) {
+    abort_unless(Storage::disk('public')->exists($path), 404);
+    return Storage::disk('public')->response($path);
+})->where('path', '.*');
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

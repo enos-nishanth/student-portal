@@ -13,29 +13,104 @@ use Throwable;
 
 class ProductController extends Controller
 {
-    public function index()
-    {
-        try {
-            $products = Product::latest()->get();
+    
+public function index()
+{
+    try {
+        //Start building the product query
+        $query = Product::query();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Products retrieved successfully.',
-                'data' => $products->map(
-                    fn ($product) => $this->formatProduct($product)
-                ),
-            ], 200);
-
-        } catch (Throwable $exception) {
-            Log::error('Failed to retrieve products.', [
-                'exception' => $exception,
-            ]);
-
-            return $this->serverError(
-                'Unable to retrieve products right now.'
-            );
+        //Search by product name or description
+        if ($search = request()->query('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
         }
+
+        //Filter by product type
+        if ($type = request()->query('type')) {
+            $query->where('type', $type);
+        }
+
+        //Filter by product status
+        $status = request()->query('status');
+
+        if ($status === 'active') {
+            $query->where('status', true);
+        } elseif ($status === 'inactive') {
+            $query->where('status', false);
+        }
+
+        //Filter by minimum price
+        $minPrice = request()->query('min_price');
+
+        if ($minPrice !== null && is_numeric($minPrice)) {
+            $query->where('price', '>=', $minPrice);
+        }
+
+        //Filter by maximum price
+        $maxPrice = request()->query('max_price');
+
+        if ($maxPrice !== null && is_numeric($maxPrice)) {
+            $query->where('price', '<=', $maxPrice);
+        }
+
+        //Allow only approved sorting columns
+        $allowedSortColumns = [
+            'name',
+            'price',
+            'created_at',
+        ];
+
+        $sortBy = request()->query('sort_by', 'created_at');
+
+        if (!in_array($sortBy, $allowedSortColumns, true)) {
+            $sortBy = 'created_at';
+        }
+
+        //Allow only ascending or descending order
+        $sortOrder = request()->query('sort_order', 'desc');
+
+        if (!in_array($sortOrder, ['asc', 'desc'], true)) {
+            $sortOrder = 'desc';
+        }
+
+        $query->orderBy($sortBy, $sortOrder);
+
+        //Paginate the filtered products
+        $perPage = (int) request()->query('per_page', 20);
+        $perPage = max(1, min($perPage, 100));
+
+        $products = $query->paginate($perPage);
+
+        //Return the formatted JSON response
+        return response()->json([
+            'success' => true,
+            'message' => 'Products retrieved successfully.',
+            'data' => $products->getCollection()
+                ->map(fn ($product) => $this->formatProduct($product))
+                ->values(),
+
+            'pagination' => [
+                'current_page' => $products->currentPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total(),
+                'last_page' => $products->lastPage(),
+            ],
+        ], 200);
+
+    } catch (Throwable $exception) {
+        Log::error('Failed to retrieve products.', [
+            'exception' => $exception,
+        ]);
+
+        return $this->serverError(
+            'Unable to retrieve products right now.'
+        );
     }
+}
+
 
     public function store(Request $request)
     {
